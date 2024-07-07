@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../App.css'; // Import the CSS file for custom styles
 
 interface Post {
@@ -7,6 +7,12 @@ interface Post {
   title: string;
   content: string;
   created_at: string;
+  tags: { name: string }[];
+}
+
+interface Tag {
+  id: number;
+  name: string;
 }
 
 const extractFirstImageUrl = (content: string): string | null => {
@@ -16,26 +22,91 @@ const extractFirstImageUrl = (content: string): string | null => {
 
 const BlogPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [formQuery, setFormQuery] = useState<string>('');
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const params = new URLSearchParams(location.search);
+    const tag = params.get('tag');
+    if (tag) {
+      setSelectedTags(tag.split(','));
+    }
+
+    const fetchData = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/posts/?search=${searchQuery}`);
-        if (!res.ok) {
+        const [postsRes, tagsRes] = await Promise.all([
+          fetch(`http://localhost:8000/api/posts/?search=${searchQuery}`),
+          fetch('http://localhost:8000/api/tags/')
+        ]);
+
+        if (!postsRes.ok) {
           throw new Error('Failed to fetch posts');
         }
-        const data = await res.json();
-        setPosts(data);
+        if (!tagsRes.ok) {
+          throw new Error('Failed to fetch tags');
+        }
+
+        const postsData = await postsRes.json();
+        const tagsData = await tagsRes.json();
+
+        setPosts(postsData);
+        setTags(tagsData);
       } catch (err) {
-        console.error('Error fetching posts:', err);
-        setError('Failed to fetch posts');
+        console.error('Error fetching data:', err);
+        setError('Failed to fetch data');
       }
     };
 
-    fetchPosts();
-  }, [searchQuery]);
+    fetchData();
+  }, [searchQuery, location.search]);
+
+  const handleTagClick = (tag: string) => {
+    setSelectedTags(prevTags =>
+      prevTags.includes(tag) ? prevTags.filter(t => t !== tag) : [...prevTags, tag]
+    );
+  };
+
+  const handleAllClick = () => {
+    setSelectedTags([]);
+    navigate('/');
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchQuery(formQuery);
+  };
+
+  const handleClearSearch = () => {
+    setFormQuery('');
+    setSearchQuery('');
+    navigate('/');
+  };
+
+  const handleFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsSearchFocused(false);
+  };
+
+  const filteredPosts = posts.filter(post => 
+    selectedTags.length === 0 || selectedTags.every(tag => post.tags.some(t => t.name === tag))
+  );
+
+  useEffect(() => {
+    if (selectedTags.length > 0) {
+      navigate(`/?tag=${selectedTags.join(',')}`);
+    } else {
+      navigate('/');
+    }
+  }, [selectedTags, navigate]);
 
   if (error) {
     return <p className="text-red-500">{error}</p>;
@@ -43,18 +114,47 @@ const BlogPosts: React.FC = () => {
 
   return (
     <main className="p-8">
-      <h1 className="text-2xl mb-4">Blog Posts</h1>
-      <div className="flex justify-center mb-4">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search"
-          className="w-full max-w-md pl-5 p-2 border border-gray-300 rounded-full shadow-md"
-        />
+      <form onSubmit={handleSearchSubmit} className="flex justify-center mb-4 relative">
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            value={formQuery}
+            onChange={(e) => setFormQuery(e.target.value)}
+            placeholder="Search"
+            className="pl-5 p-2 border border-gray-300 rounded-full shadow-md w-full pr-10"
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          />
+          {isSearchFocused && (
+            <div className="absolute right-0 top-0 h-full flex items-center pr-3">
+              <button type="submit" className="hidden">Search</button>
+              <i 
+                className="fa-solid fa-circle-xmark text-gray-500 cursor-pointer" 
+                onClick={handleClearSearch}
+              ></i>
+            </div>
+          )}
+        </div>
+      </form>
+      <div className="flex flex-wrap gap-2 mb-8">
+        <span
+          onClick={handleAllClick}
+          className={`px-3 py-1 text-sm text-gray-700 cursor-pointer rounded-full ${selectedTags.length === 0 ? 'bg-blue-200' : 'bg-gray-200'}`}
+        >
+          All
+        </span>
+        {tags.map(tag => (
+          <span
+            key={tag.id}
+            onClick={() => handleTagClick(tag.name)}
+            className={`px-3 py-1 text-sm text-gray-700 cursor-pointer rounded-full ${selectedTags.includes(tag.name) ? 'bg-blue-200' : 'bg-gray-200'}`}
+          >
+            {tag.name}
+          </span>
+        ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <Link
             key={post.id}
             to={`/posts/${post.id}`}
