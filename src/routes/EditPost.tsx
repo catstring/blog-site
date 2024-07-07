@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import '../App.css'; // Ensure this imports the necessary CSS
 
 const EditPost: React.FC = () => {
@@ -49,6 +49,9 @@ const EditPost: React.FC = () => {
   return (
     <main className="flex flex-col items-center justify-center h-screen">
       <div className="expanded-card p-4 flex flex-col justify-between">
+      <Link to="/admin-blog-posts" className="absolute top-2 right-2 text-red-500">
+          <i className="fa-solid fa-circle-arrow-left"></i>
+        </Link>
         <h1 className="text-2xl mb-4">Edit Post</h1>
         {error && <p className="text-red-500">{error}</p>}
         <form className="flex flex-col gap-4 h-full" onSubmit={updatePost}>

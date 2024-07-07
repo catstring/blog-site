@@ -1,3 +1,4 @@
+// PostDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -40,12 +41,12 @@ const PostDetail: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-11/12 md:w-3/4 lg:w-2/3 xl:w-1/2 overflow-y-auto">
-        <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
-        <p className="mb-4">{post.content}</p>
-        <p className="text-sm text-gray-600">Created at: {new Date(post.created_at).toLocaleString()}</p>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold">{post.title}</h1>
+      <div className="mt-5">
+        <p>{post.content}</p>
       </div>
+      <p className="mt-5 text-sm text-gray-600">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
     </div>
   );
 };

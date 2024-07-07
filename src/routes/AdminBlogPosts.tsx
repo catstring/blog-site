@@ -36,6 +36,10 @@ const AdminBlogPosts: React.FC = () => {
   }, []);
 
   const deletePost = async (postId: number) => {
+    if (!window.confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+
     try {
       const res = await fetch(`http://localhost:8000/api/posts/${postId}/`, {
         method: 'DELETE',
@@ -59,27 +63,32 @@ const AdminBlogPosts: React.FC = () => {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-2xl mb-4">Admin Page</h1>
-      <Link to="/create" className="block mb-4">
-        <i className="fa-solid fa-plus text-4xl"></i>
+    <main className="px-8">
+      <Link to="/create" className="mb-4">
+        <i className="fa-solid fa-plus text-6xl mx-5 mb-5"></i>
       </Link>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {posts.map((post) => (
-          <div key={post.id} className="blog-card relative">
-            <div className="p-4 flex flex-col justify-between h-full">
-              <div className="aspect-w-4 aspect-h-3">
-                <h2 className="text-xl font-bold">{post.title}</h2>
+          <div key={post.id} className="group">
+            <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
+              <div className="absolute top-0 left-0 w-full h-full bg-gray-200 rounded-lg overflow-hidden">
+                {/* Placeholder for the image */}
+                <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Link to={`/edit/${post.id}`} className="text-blue-500 hover:text-blue-700">
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </Link>
+                  <button
+                    onClick={() => deletePost(post.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <i className="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
               </div>
-              <p className="text-sm text-gray-600 mt-2">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
-              <div className="absolute top-2 right-2 flex space-x-2">
-                <Link to={`/edit/${post.id}`} className="text-blue-500 hover:text-blue-700">
-                  <i className="fa-solid fa-pen-to-square"></i>
-                </Link>
-                <button onClick={() => deletePost(post.id)} className="text-red-500 hover:text-red-700">
-                  <i className="fa-solid fa-trash-can"></i>
-                </button>
-              </div>
+            </div>
+            <div className="mt-2">
+              <h2 className="text-md font-bold">{post.title}</h2>
+              <p className="text-sm text-gray-600">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
             </div>
           </div>
         ))}
