@@ -20,14 +20,15 @@ const extractFirstImageUrl = (content: string): string | null => {
   return match ? match[1] : null;
 };
 
-const BlogPosts: React.FC = () => {
+interface BlogPostsProps {
+  searchQuery: string;
+}
+
+const BlogPosts: React.FC<BlogPostsProps> = ({ searchQuery }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [formQuery, setFormQuery] = useState<string>('');
-  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -77,25 +78,6 @@ const BlogPosts: React.FC = () => {
     navigate('/');
   };
 
-  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSearchQuery(formQuery);
-  };
-
-  const handleClearSearch = () => {
-    setFormQuery('');
-    setSearchQuery('');
-    navigate('/');
-  };
-
-  const handleFocus = () => {
-    setIsSearchFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsSearchFocused(false);
-  };
-
   const filteredPosts = posts.filter(post => 
     selectedTags.length === 0 || selectedTags.every(tag => post.tags.some(t => t.name === tag))
   );
@@ -114,32 +96,10 @@ const BlogPosts: React.FC = () => {
 
   return (
     <main className="p-8">
-      <form onSubmit={handleSearchSubmit} className="flex justify-center mb-4 relative">
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            value={formQuery}
-            onChange={(e) => setFormQuery(e.target.value)}
-            placeholder="Search"
-            className="pl-5 p-2 border border-gray-300 rounded-full shadow-md w-full pr-10"
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-          />
-          {isSearchFocused && (
-            <div className="absolute right-0 top-0 h-full flex items-center pr-3">
-              <button type="submit" className="hidden">Search</button>
-              <i 
-                className="fa-solid fa-circle-xmark text-gray-500 cursor-pointer" 
-                onClick={handleClearSearch}
-              ></i>
-            </div>
-          )}
-        </div>
-      </form>
       <div className="flex flex-wrap gap-2 mb-8">
         <span
           onClick={handleAllClick}
-          className={`px-3 py-1 text-sm text-gray-700 cursor-pointer rounded-full ${selectedTags.length === 0 ? 'bg-blue-200' : 'bg-gray-200'}`}
+          className={`px-4 py-2 text-sm font-medium cursor-pointer rounded-full ${selectedTags.length === 0 ? 'bg-white text-black' : 'bg-stone-700 text-white'}`}
         >
           All
         </span>
@@ -147,7 +107,7 @@ const BlogPosts: React.FC = () => {
           <span
             key={tag.id}
             onClick={() => handleTagClick(tag.name)}
-            className={`px-3 py-1 text-sm text-gray-700 cursor-pointer rounded-full ${selectedTags.includes(tag.name) ? 'bg-blue-200' : 'bg-gray-200'}`}
+            className={`px-4 py-2 text-sm font-medium cursor-pointer rounded-full ${selectedTags.includes(tag.name) ? 'bg-white text-black' : 'bg-stone-700 text-white'}`}
           >
             {tag.name}
           </span>
@@ -161,7 +121,7 @@ const BlogPosts: React.FC = () => {
             className="group"
           >
             <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
-              <div className="absolute top-0 left-0 w-full h-full bg-gray-200 rounded-lg overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-full bg-stone-200 rounded-lg overflow-hidden">
                 {/* Extract the first image URL from the content */}
                 {extractFirstImageUrl(post.content) ? (
                   <img
@@ -170,7 +130,7 @@ const BlogPosts: React.FC = () => {
                     className="absolute top-0 left-0 w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400">
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-stone-400">
                     No Image
                   </div>
                 )}
@@ -179,8 +139,8 @@ const BlogPosts: React.FC = () => {
               </div>
             </div>
             <div className="mt-2">
-              <h2 className="text-md font-bold">{post.title}</h2>
-              <p className="text-sm text-gray-600">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+              <h2 className="text-md text-stone-100 font-bold">{post.title}</h2>
+              <p className="text-sm text-stone-400">{new Date(post.created_at).toLocaleDateString()}</p>
             </div>
           </Link>
         ))}

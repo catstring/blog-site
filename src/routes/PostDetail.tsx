@@ -51,13 +51,13 @@ const PostDetail: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold">{post.title}</h1>
+      <h1 className="text-3xl text-stone-100 font-bold">{post.title}</h1>
       <div className="mt-2">
         <div className="flex flex-wrap gap-2">
           {post.tags.map(tag => (
             <span
               key={tag.name}
-              className="bg-gray-200 rounded-full px-3 text-sm text-gray-700 cursor-pointer"
+              className="bg-stone-200 rounded-full px-3 py-1 text-sm text-stone-700 cursor-pointer"
               onClick={() => handleTagClick(tag.name)}
             >
               {tag.name}
@@ -72,7 +72,7 @@ const PostDetail: React.FC = () => {
           rehypePlugins={[rehypeHighlight]}
         />
       </div>
-      <p className="mt-5 text-sm text-gray-600">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+      <p className="mt-5 text-sm text-stone-400">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import Admin from './routes/Login'; 
 import BlogPosts from './routes/BlogPosts';
 import PostDetail from './routes/PostDetail';
@@ -11,6 +11,11 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
   const [isAdminHovered, setIsAdminHovered] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [formQuery, setFormQuery] = useState<string>('');
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+
+  const navigate = useNavigate(); // Ensure useNavigate is used within the Router context
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -21,47 +26,97 @@ const App: React.FC = () => {
     setIsLoggedIn(false);
   };
 
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchQuery(formQuery);
+    navigate(`/?search=${formQuery}`);
+  };
+
+  const handleClearSearch = () => {
+    setFormQuery('');
+    setSearchQuery('');
+    navigate('/');
+  };
+
+  const handleFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsSearchFocused(false);
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <Router>
-        <nav className="p-4 bg-gray-100 text-grey flex justify-between">
-          <div>
-            <Link to="/" className="m-4 text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 font-bold text-2xl">Todd Tsai</Link>
-            {isLoggedIn && <Link to="/admin-blog-posts" className="mr-4 text-[#878787]">Admin</Link>}
+    <div className="bg-stone-900 min-h-screen">
+      <nav className="p-4 bg-stone-900 text-stone-400 flex justify-between items-center">
+        <div className="flex items-center">
+          <Link to="/" className="ml-4 mr-4 font-bold text-2xl">
+            <span className="text-stone-100 whitespace-nowrap">
+              Todd <span className="font-thin">Tsai</span>
+            </span>
+          </Link>
+          {isLoggedIn && <Link to="/admin-blog-posts" className="mr-4 text-stone-400">Admin</Link>}
+        </div>
+        <form onSubmit={handleSearchSubmit} className="flex-grow max-w-md relative">
+          <div className="relative w-full">
+            <input
+              type="text"
+              value={formQuery}
+              onChange={(e) => setFormQuery(e.target.value)}
+              placeholder="Search"
+              className="pl-5 p-2 border border-stone-600 rounded-full shadow-md w-full pr-10 bg-stone-900 font-thin text-stone-100"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+            {isSearchFocused && (
+              <div className="absolute right-0 top-0 h-full flex items-center pr-3">
+                <button type="submit" className="hidden">Search</button>
+                <i 
+                  className="fa-solid fa-circle-xmark text-stone-500 cursor-pointer" 
+                  onClick={handleClearSearch}
+                ></i>
+              </div>
+            )}
           </div>
-          {isLoggedIn ? (
-            <div
-              onClick={handleLogout}
-              onMouseEnter={() => setIsLogoutHovered(true)}
-              onMouseLeave={() => setIsLogoutHovered(false)}
-              className="cursor-pointer"
-            >
-              <i className={`fa-solid ${isLogoutHovered ? 'fa-door-closed' : 'fa-door-open'}`}></i>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              onMouseEnter={() => setIsAdminHovered(true)}
-              onMouseLeave={() => setIsAdminHovered(false)}
-              className="cursor-pointer"
-            >
-              <i className={`fa-solid ${isAdminHovered ? 'fa-door-open' : 'fa-door-closed'}`}></i>
-            </Link>
-          )}
-        </nav>
-        <div>
+        </form>
+        {isLoggedIn ? (
+          <div
+            onClick={handleLogout}
+            onMouseEnter={() => setIsLogoutHovered(true)}
+            onMouseLeave={() => setIsLogoutHovered(false)}
+            className="cursor-pointer ml-4"
+          >
+            <i className={`fa-solid ${isLogoutHovered ? 'fa-door-closed' : 'fa-door-open'} text-stone-100`}></i>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            onMouseEnter={() => setIsAdminHovered(true)}
+            onMouseLeave={() => setIsAdminHovered(false)}
+            className="cursor-pointer ml-4"
+          >
+            <i className={`fa-solid ${isAdminHovered ? 'fa-door-open' : 'fa-door-closed'} text-stone-100`}></i>
+          </Link>
+        )}
+      </nav>
+      <div>
         <Routes>
           <Route path="/login" element={<Admin onLogin={handleLogin} />} />
-          <Route path="/" element={<BlogPosts />} />
+          <Route path="/" element={<BlogPosts searchQuery={searchQuery} />} />
           <Route path="/posts/:id" element={<PostDetail />} />
           {isLoggedIn && <Route path="/admin-blog-posts" element={<AdminBlogPosts />} />}
           {isLoggedIn && <Route path="/create" element={<CreatePost />} />}
           {isLoggedIn && <Route path="/edit/:id" element={<EditPost />} />}
         </Routes>
-        </div>
-      </Router>
+      </div>
     </div>
   );
 };
 
-export default App;
+const WrappedApp = () => (
+  <Router>
+    <App />
+  </Router>
+);
+
+export default WrappedApp;
