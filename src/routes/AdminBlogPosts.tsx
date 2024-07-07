@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css';
+import '../App.css'; // Import the CSS file for custom styles
 
 interface Post {
   id: number;
@@ -8,6 +8,11 @@ interface Post {
   content: string;
   created_at: string;
 }
+
+const extractFirstImageUrl = (content: string): string | null => {
+  const match = content.match(/!\[.*?\]\((.*?)\)/);
+  return match ? match[1] : null;
+};
 
 const AdminBlogPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -63,7 +68,7 @@ const AdminBlogPosts: React.FC = () => {
   }
 
   return (
-    <main className="px-8">
+    <main className="p-8">
       <Link to="/create" className="mb-4">
         <i className="fa-solid fa-plus text-6xl mx-5 mb-5"></i>
       </Link>
@@ -72,7 +77,18 @@ const AdminBlogPosts: React.FC = () => {
           <div key={post.id} className="group">
             <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
               <div className="absolute top-0 left-0 w-full h-full bg-gray-200 rounded-lg overflow-hidden">
-                {/* Placeholder for the image */}
+                {/* Extract the first image URL from the content */}
+                {extractFirstImageUrl(post.content) ? (
+                  <img
+                    src={extractFirstImageUrl(post.content) || ''}
+                    alt="Post image"
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400">
+                    No Image
+                  </div>
+                )}
                 <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Link to={`/edit/${post.id}`} className="text-blue-500 hover:text-blue-700">
                     <i className="fa-solid fa-pen-to-square"></i>

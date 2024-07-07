@@ -9,6 +9,11 @@ interface Post {
   created_at: string;
 }
 
+const extractFirstImageUrl = (content: string): string | null => {
+  const match = content.match(/!\[.*?\]\((.*?)\)/);
+  return match ? match[1] : null;
+};
+
 const BlogPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -39,13 +44,15 @@ const BlogPosts: React.FC = () => {
   return (
     <main className="p-8">
       <h1 className="text-2xl mb-4">Blog Posts</h1>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search posts..."
-        className="mb-4 p-2 border border-gray-300 rounded"
-      />
+      <div className="flex justify-center mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search"
+          className="w-full max-w-md pl-5 p-2 border border-gray-300 rounded-full shadow-md"
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {posts.map((post) => (
           <Link
@@ -55,7 +62,18 @@ const BlogPosts: React.FC = () => {
           >
             <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
               <div className="absolute top-0 left-0 w-full h-full bg-gray-200 rounded-lg overflow-hidden">
-                {/* Placeholder for the image */}
+                {/* Extract the first image URL from the content */}
+                {extractFirstImageUrl(post.content) ? (
+                  <img
+                    src={extractFirstImageUrl(post.content) || ''}
+                    alt="Post image"
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400">
+                    No Image
+                  </div>
+                )}
                 <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
               </div>

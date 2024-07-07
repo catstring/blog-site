@@ -63,3 +63,137 @@
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out;
 }
 
+/* General styles for markdown rendering */
+.markdown-body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  padding: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.5em;
+  font-weight: bold;
+}
+
+.markdown-body p {
+  margin-bottom: 1em;
+}
+
+.markdown-body a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+  margin-bottom: 1em;
+}
+
+.markdown-body blockquote {
+  padding: 0.5em 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+  background-color: #f6f8fa;
+  border-radius: 8px;
+}
+
+.markdown-body code {
+  background-color: #f6f8fa;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 85%;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+.markdown-body pre {
+  background-color: #f6f8fa;
+  padding: 1em;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+/* Highlight.js theme styles (you can choose any theme from highlight.js) */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #f6f8fa;
+  color: #333;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #d73a49;
+}
+
+.hljs-literal,
+.hljs-number,
+.hljs-tag .hljs-attr {
+  color: #005cc5;
+}
+
+.hljs-string,
+.hljs-doctag,
+.hljs-attr,
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #22863a;
+}
+
+.hljs-attribute {
+  color: #6f42c1;
+}
+
+.hljs-variable,
+.hljs-template-variable {
+  color: #e36209;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #032f62;
+}
+
+.hljs-title,
+.hljs-name {
+  color: #007bff;
+}
+
+.hljs-type,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: #b31d28;
+}
+
+.hljs-deletion {
+  color: #d73a49;
+}

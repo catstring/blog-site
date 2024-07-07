@@ -1,6 +1,9 @@
-// PostDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github.css'; // You can choose any highlight.js theme
 
 interface Post {
   id: number;
@@ -21,7 +24,7 @@ const PostDetail: React.FC = () => {
         if (!res.ok) {
           throw new Error('Failed to fetch post');
         }
-        const data = await res.json();
+        const data: Post = await res.json();
         setPost(data);
       } catch (err) {
         console.error('Error fetching post:', err);
@@ -43,8 +46,12 @@ const PostDetail: React.FC = () => {
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold">{post.title}</h1>
-      <div className="mt-5">
-        <p>{post.content}</p>
+      <div className="mt-5 markdown-body">
+        <ReactMarkdown
+          children={post.content}
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeHighlight]}
+        />
       </div>
       <p className="mt-5 text-sm text-gray-600">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
     </div>
