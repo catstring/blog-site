@@ -6,6 +6,20 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css'; // Import the highlight.js theme
 import { useTheme } from '../contexts/ThemeContext';
 
+// Define the Post type
+type Tag = {
+  name: string;
+};
+
+type Post = {
+  id: string;
+  title: string;
+  content: string;
+  tags: Tag[];
+  view_count: number;
+  created_at: string;
+};
+
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
@@ -58,7 +72,7 @@ const PostDetail: React.FC = () => {
     return <p>Loading...</p>;
   }
 
-  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
   return (
     <div className="flex justify-center p-8">

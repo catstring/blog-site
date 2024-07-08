@@ -14,6 +14,7 @@ interface NavBarProps {
   handleClearSearch: () => void;
   isDropdownOpen: boolean;
   toggleDropdown: () => void;
+  closeDropdown: () => void; 
 }
 
 const NavBar: React.FC<NavBarProps> = ({
