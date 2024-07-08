@@ -52,7 +52,7 @@ const EditPost: React.FC = () => {
 
   return (
     <div className={`flex justify-center p-8 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-      <div className={`relative max-w-3xl w-full p-6 rounded-lg shadow-md ${theme === 'dark' ? 'bg-stone-800 text-stone-100' : 'bg-white text-black'}`}>
+      <div className={`relative max-w-3xl w-full p-6 rounded-lg shadow-md ${theme === 'dark' ? 'bg-stone-800 text-stone-100' : 'bg-gray-100 text-black'}`}>
         <Link to="/admin-blog-posts" className="absolute top-4 right-4 text-red-500">
           <i className="fa-solid fa-circle-arrow-left"></i>
         </Link>
@@ -87,7 +87,7 @@ const EditPost: React.FC = () => {
               placeholder="Enter tags separated by commas"
             />
           </label>
-          <button className="bg-blue-500 text-white py-2 px-4 mt-4 self-end" type="submit">
+          <button className="rounded bg-blue-500 text-white py-2 px-4 mt-4 self-end" type="submit">
             Update Post
           </button>
         </form>

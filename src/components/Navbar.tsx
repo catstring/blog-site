@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface NavBarProps {
@@ -30,6 +30,8 @@ const NavBar: React.FC<NavBarProps> = ({
   isDropdownOpen,
   toggleDropdown,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <nav className={`p-4 ${theme === 'dark' ? 'bg-stone-900 text-stone-400' : 'bg-white text-black'} flex justify-between items-center`}>
       <div className="flex items-center space-x-4">
@@ -54,7 +56,7 @@ const NavBar: React.FC<NavBarProps> = ({
         </div>
         <Link to="/" className="font-bold text-2xl">
           <span className={`${theme === 'dark' ? 'text-stone-100' : 'text-black'}`}>
-            Todd<span className="font-thin">Tsai</span>
+            Todd<span className="font-thin">'s Blog</span>
           </span>
         </Link>
       </div>
@@ -64,15 +66,19 @@ const NavBar: React.FC<NavBarProps> = ({
             type="text"
             value={formQuery}
             onChange={(e) => setFormQuery(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholder="Search"
             className={`pl-5 p-2 border rounded-full w-full pr-10 ${theme === 'dark' ? 'bg-stone-900 text-stone-500 border-stone-600 dark-placeholder' : 'bg-white text-gray-500 border-gray-300 light-placeholder'}`}
           />
           <div className="absolute right-0 top-0 h-full flex items-center pr-3">
             <button type="submit" className="hidden">Search</button>
-            <i
-              className={`fa-solid fa-circle-xmark cursor-pointer ${theme === 'dark' ? 'text-stone-500' : 'text-gray-500'}`}
-              onClick={handleClearSearch}
-            ></i>
+            {isFocused && (
+              <i
+                className={`fa-solid fa-circle-xmark cursor-pointer ${theme === 'dark' ? 'text-stone-500' : 'text-gray-500'}`}
+                onMouseDown={handleClearSearch}
+              ></i>
+            )}
           </div>
         </form>
       </div>

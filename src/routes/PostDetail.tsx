@@ -1,27 +1,17 @@
-// src/routes/PostDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github.css'; // You can choose any highlight.js theme
+import 'highlight.js/styles/github.css'; // Import the highlight.js theme
 import { useTheme } from '../contexts/ThemeContext';
-
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  created_at: string;
-  view_count: number;
-  tags: { name: string }[];
-}
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { theme } = useTheme(); // Retrieve theme from context
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -40,7 +30,6 @@ const PostDetail: React.FC = () => {
 
     fetchPost();
 
-    // Increment view count
     const incrementViewCount = async () => {
       try {
         await fetch(`http://localhost:8000/api/posts/${id}/view/`, {
@@ -69,11 +58,13 @@ const PostDetail: React.FC = () => {
     return <p>Loading...</p>;
   }
 
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
   return (
     <div className="flex justify-center p-8">
       <div className="max-w-3xl w-full">
         <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
-        <div className="mt-2">
+        <div className="mt-2 mb-4">
           <div className="flex flex-wrap gap-2">
             {post.tags.map(tag => (
               <span
@@ -86,19 +77,20 @@ const PostDetail: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mt-2 markdown-body">
+        <div className={`relative max-w-3xl w-full p-6 rounded-lg shadow-md markdown-body ${theme === 'dark' ? 'bg-stone-800 text-stone-100' : 'bg-gray-100 text-black'}`}>
           <ReactMarkdown
+            className={`${theme === 'dark' ? 'dark' : ''}`}
             children={post.content}
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight]}
           />
         </div>
-        <div className="mt-5 flex items-center space-x-4">
-          <div className="flex items-center space-x-1 text-stone-400">
+        <div className="mt-5 flex items-center space-x-4 text-sm font-thin text-stone-400">
+          <div className="flex items-center space-x-1">
             <i className="fa-solid fa-eye"></i>
             <span>{post.view_count}</span>
           </div>
-          <p className="text-sm text-stone-400">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+          <p className="">Published: {new Date(post.created_at).toLocaleDateString(undefined, dateOptions)}</p>
         </div>
       </div>
     </div>

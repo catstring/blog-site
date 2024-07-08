@@ -22,7 +22,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-0 left-0 right-0 flex justify-center items-center p-4 bg-opacity-75 bg-black z-20 sm:hidden">
+    <div className="absolute top-0 left-0 right-0 flex justify-center items-center p-4 bg-opacity-75 z-20 sm:hidden">
       <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
         <input
           type="text"
