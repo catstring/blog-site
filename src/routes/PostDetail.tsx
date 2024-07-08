@@ -10,6 +10,7 @@ interface Post {
   title: string;
   content: string;
   created_at: string;
+  view_count: number;
   tags: { name: string }[];
 }
 
@@ -18,6 +19,7 @@ const PostDetail: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const theme = localStorage.getItem('theme') || 'dark'; // Retrieve theme from localStorage
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -35,6 +37,22 @@ const PostDetail: React.FC = () => {
     };
 
     fetchPost();
+
+    // Increment view count
+    const incrementViewCount = async () => {
+      try {
+        await fetch(`http://localhost:8000/api/posts/${id}/view/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+      } catch (err) {
+        console.error('Error incrementing view count:', err);
+      }
+    };
+
+    incrementViewCount();
   }, [id]);
 
   const handleTagClick = (tag: string) => {
@@ -51,13 +69,13 @@ const PostDetail: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl text-stone-100 font-bold">{post.title}</h1>
+      <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
       <div className="mt-2">
         <div className="flex flex-wrap gap-2">
           {post.tags.map(tag => (
             <span
               key={tag.name}
-              className="bg-stone-200 rounded-full px-3 py-1 text-sm text-stone-700 cursor-pointer"
+              className={`rounded-full px-3 p-2 text-sm cursor-pointer ${theme === 'dark' ? 'bg-stone-700 text-white' : 'bg-stone-200 text-black'}`}
               onClick={() => handleTagClick(tag.name)}
             >
               {tag.name}
@@ -65,14 +83,20 @@ const PostDetail: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className="mt-5 markdown-body">
+      <div className="mt-2 markdown-body">
         <ReactMarkdown
           children={post.content}
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeHighlight]}
         />
       </div>
-      <p className="mt-5 text-sm text-stone-400">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+      <div className="mt-5 flex items-center space-x-4">
+        <div className="flex items-center space-x-1 text-stone-400">
+          <i className="fa-solid fa-eye"></i>
+          <span>{post.view_count}</span>
+        </div>
+        <p className="text-sm text-stone-400">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+      </div>
     </div>
   );
 };

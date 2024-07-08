@@ -5,6 +5,7 @@ import '../App.css'; // Ensure this imports the necessary CSS
 const CreatePost: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tags, setTags] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -17,7 +18,11 @@ const CreatePost: React.FC = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access')}`,
         },
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({
+          title,
+          content,
+          tag_names: tags.split(',').map(tag => tag.trim())
+        }),
       });
       if (res.ok) {
         navigate('/admin-blog-posts');
@@ -51,6 +56,16 @@ const CreatePost: React.FC = () => {
               className="border p-2 flex-grow"
               value={content}
               onChange={(e) => setContent(e.target.value)}
+            />
+          </label>
+          <label className="flex flex-col">
+            Tags
+            <input
+              className="border p-2"
+              type="text"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="Enter tags separated by commas"
             />
           </label>
           <button className="bg-blue-500 text-white py-2 px-4 mt-4" type="submit">

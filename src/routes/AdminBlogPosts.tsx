@@ -7,11 +7,35 @@ interface Post {
   title: string;
   content: string;
   created_at: string;
+  view_count: number;
 }
 
 const extractFirstImageUrl = (content: string): string | null => {
   const match = content.match(/!\[.*?\]\((.*?)\)/);
   return match ? match[1] : null;
+};
+
+const timeAgo = (dateString: string): string => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  let interval = Math.floor(seconds / 31536000);
+  if (interval > 1) return `${interval} years ago`;
+
+  interval = Math.floor(seconds / 2592000);
+  if (interval > 1) return `${interval} months ago`;
+
+  interval = Math.floor(seconds / 86400);
+  if (interval > 1) return `${interval} days ago`;
+
+  interval = Math.floor(seconds / 3600);
+  if (interval > 1) return `${interval} hours ago`;
+
+  interval = Math.floor(seconds / 60);
+  if (interval > 1) return `${interval} minutes ago`;
+
+  return `${Math.floor(seconds)} seconds ago`;
 };
 
 const AdminBlogPosts: React.FC = () => {
@@ -21,16 +45,27 @@ const AdminBlogPosts: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/posts/', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
-          },
-        });
-        if (!res.ok) {
-          throw new Error('Failed to fetch posts');
+        const cachedPosts = localStorage.getItem('adminPosts');
+        const cachedTime = localStorage.getItem('adminPostsCachedTime');
+        const now = new Date().getTime();
+
+        if (cachedPosts && cachedTime && now - parseInt(cachedTime) < 60000) { // Cache duration: 1 minute
+          setPosts(JSON.parse(cachedPosts));
+        } else {
+          const res = await fetch('http://localhost:8000/api/posts/', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('access')}`,
+            },
+          });
+          if (!res.ok) {
+            throw new Error('Failed to fetch posts');
+          }
+          const data = await res.json();
+          setPosts(data);
+
+          localStorage.setItem('adminPosts', JSON.stringify(data));
+          localStorage.setItem('adminPostsCachedTime', now.toString());
         }
-        const data = await res.json();
-        setPosts(data);
       } catch (err) {
         console.error('Error fetching posts:', err);
         setError('Failed to fetch posts');
@@ -53,7 +88,11 @@ const AdminBlogPosts: React.FC = () => {
         },
       });
       if (res.ok) {
-        setPosts(posts.filter(post => post.id !== postId));
+        const updatedPosts = posts.filter(post => post.id !== postId);
+        setPosts(updatedPosts);
+
+        // Update the cache after deleting a post
+        localStorage.setItem('adminPosts', JSON.stringify(updatedPosts));
       } else {
         throw new Error('Failed to delete post');
       }
@@ -67,17 +106,16 @@ const AdminBlogPosts: React.FC = () => {
     return <p className="text-red-500">{error}</p>;
   }
 
+  const theme = localStorage.getItem('theme') || 'dark'; // Retrieve theme from localStorage
+
   return (
-    <main className="p-8">
-      <Link to="/create" className="mb-4">
-        <i className="fa-solid fa-plus text-6xl mx-5 mb-5"></i>
-      </Link>
+    <main className="sm:px-12 px-0">
+      <h1 className="text-3xl font-bold mb-8">Admin Panel</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {posts.map((post) => (
           <div key={post.id} className="group">
             <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
-              <div className="absolute top-0 left-0 w-full h-full bg-gray-200 rounded-lg overflow-hidden">
-                {/* Extract the first image URL from the content */}
+              <div className={`absolute top-0 left-0 w-full h-full ${theme === 'dark' ? 'bg-stone-200' : 'bg-stone-200'} sm:rounded-lg overflow-hidden`}>
                 {extractFirstImageUrl(post.content) ? (
                   <img
                     src={extractFirstImageUrl(post.content) || ''}
@@ -85,7 +123,7 @@ const AdminBlogPosts: React.FC = () => {
                     className="absolute top-0 left-0 w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400">
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-stone-400">
                     No Image
                   </div>
                 )}
@@ -102,9 +140,14 @@ const AdminBlogPosts: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-2">
+            <div className="mt-2 ml-3">
               <h2 className="text-md font-bold">{post.title}</h2>
-              <p className="text-sm text-gray-600">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+              <div className="flex items-center space-x-4 pb-6 font-thin text-gray-400">
+                <div className="flex items-center space-x-1">
+                  <span>{post.view_count} views</span>
+                </div>
+                <p className="text-sm">{timeAgo(post.created_at)}</p>
+              </div>
             </div>
           </div>
         ))}
