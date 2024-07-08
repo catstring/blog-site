@@ -1,9 +1,11 @@
+// src/routes/PostDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css'; // You can choose any highlight.js theme
+import { useTheme } from '../contexts/ThemeContext';
 
 interface Post {
   id: number;
@@ -19,7 +21,7 @@ const PostDetail: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const theme = localStorage.getItem('theme') || 'dark'; // Retrieve theme from localStorage
+  const { theme } = useTheme(); // Retrieve theme from context
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -68,34 +70,36 @@ const PostDetail: React.FC = () => {
   }
 
   return (
-    <div className="p-8">
-      <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
-      <div className="mt-2">
-        <div className="flex flex-wrap gap-2">
-          {post.tags.map(tag => (
-            <span
-              key={tag.name}
-              className={`rounded-full px-3 p-2 text-sm cursor-pointer ${theme === 'dark' ? 'bg-stone-700 text-white' : 'bg-stone-200 text-black'}`}
-              onClick={() => handleTagClick(tag.name)}
-            >
-              {tag.name}
-            </span>
-          ))}
+    <div className="flex justify-center p-8">
+      <div className="max-w-3xl w-full">
+        <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
+        <div className="mt-2">
+          <div className="flex flex-wrap gap-2">
+            {post.tags.map(tag => (
+              <span
+                key={tag.name}
+                className={`rounded-full px-3 p-2 text-sm cursor-pointer ${theme === 'dark' ? 'bg-stone-700 text-white' : 'bg-stone-200 text-black'}`}
+                onClick={() => handleTagClick(tag.name)}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="mt-2 markdown-body">
-        <ReactMarkdown
-          children={post.content}
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeHighlight]}
-        />
-      </div>
-      <div className="mt-5 flex items-center space-x-4">
-        <div className="flex items-center space-x-1 text-stone-400">
-          <i className="fa-solid fa-eye"></i>
-          <span>{post.view_count}</span>
+        <div className="mt-2 markdown-body">
+          <ReactMarkdown
+            children={post.content}
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight]}
+          />
         </div>
-        <p className="text-sm text-stone-400">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+        <div className="mt-5 flex items-center space-x-4">
+          <div className="flex items-center space-x-1 text-stone-400">
+            <i className="fa-solid fa-eye"></i>
+            <span>{post.view_count}</span>
+          </div>
+          <p className="text-sm text-stone-400">Created on: {new Date(post.created_at).toLocaleDateString()}</p>
+        </div>
       </div>
     </div>
   );

@@ -9,20 +9,21 @@ import CreatePost from './routes/CreatePost';
 import EditPost from './routes/EditPost';
 import NavBar from './components/Navbar';
 import SearchOverlay from './components/SearchOverlay';
+import { useTheme } from './contexts/ThemeContext';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [formQuery, setFormQuery] = useState<string>('');
-  const [theme, setTheme] = useState<string>(localStorage.getItem('theme') || 'dark');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+
+  const { theme, toggleTheme } = useTheme(); // Use theme context
 
   const navigate = useNavigate(); // Ensure useNavigate is used within the Router context
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const handleLogin = () => {
@@ -56,11 +57,6 @@ const App: React.FC = () => {
     navigate('/');
   };
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
-    setIsDropdownOpen(false);
-  };
-
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -82,6 +78,11 @@ const App: React.FC = () => {
     console.log('Cache cleared');
   };
 
+  const handleToggleTheme = () => {
+    toggleTheme();
+    setIsDropdownOpen(false);
+  };
+
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-stone-900 text-stone-100' : 'bg-white text-black'} ${isDropdownOpen || isSearchOpen ? 'overflow-hidden' : ''}`}>
       <NavBar
@@ -89,7 +90,7 @@ const App: React.FC = () => {
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
         onLogin={handleLogin}
-        toggleTheme={toggleTheme}
+        toggleTheme={handleToggleTheme}
         openSearch={openSearch}
         formQuery={formQuery}
         setFormQuery={setFormQuery}
@@ -117,7 +118,7 @@ const App: React.FC = () => {
       <div className={`${isDropdownOpen || isSearchOpen ? 'pointer-events-none' : ''} relative z-0`}>
         <Routes>
           <Route path="/login" element={<Admin onLogin={handleLoginSuccess} />} />
-          <Route path="/" element={<BlogPosts searchQuery={searchQuery} theme={theme} />} />
+          <Route path="/" element={<BlogPosts searchQuery={searchQuery} />} />
           <Route path="/posts/:id" element={<PostDetail />} />
           {isLoggedIn && <Route path="/admin-blog-posts" element={<AdminBlogPosts />} />}
           {isLoggedIn && <Route path="/create" element={<CreatePost />} />}

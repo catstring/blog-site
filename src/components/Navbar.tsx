@@ -1,4 +1,3 @@
-// src/components/NavBar.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,7 +14,6 @@ interface NavBarProps {
   handleClearSearch: () => void;
   isDropdownOpen: boolean;
   toggleDropdown: () => void;
-  closeDropdown: () => void;
 }
 
 const NavBar: React.FC<NavBarProps> = ({
@@ -55,7 +53,7 @@ const NavBar: React.FC<NavBarProps> = ({
           )}
         </div>
         <Link to="/" className="font-bold text-2xl">
-          <span className={`${theme === 'dark' ? 'text-stone-100' : 'text-black'} whitespace-nowrap`}>
+          <span className={`${theme === 'dark' ? 'text-stone-100' : 'text-black'}`}>
             Todd<span className="font-thin">Tsai</span>
           </span>
         </Link>
