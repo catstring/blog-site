@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@types/react-syntax-highlighter": "^15.5.13",
-    "github-markdown-css": "^5.6.1",
     "highlight.js": "^11.10.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
