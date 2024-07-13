@@ -71,14 +71,6 @@ const PostDetail: React.FC = () => {
   }
 
   const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  const test = `# Example Markdown
-
-Here is a JavaScript code block:
-
-\`\`\`javascript
-const add = (num: number) => num + 1;
-console.log(add(5)); // 6
-\`\`\``
 
   return (
     <div className="flex justify-center p-8">
