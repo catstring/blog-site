@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import '../App.css'; // Ensure this imports the necessary CSS
 import { useTheme } from '../contexts/ThemeContext'; // Import useTheme hook
 
 const CreatePost: React.FC = () => {

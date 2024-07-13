@@ -62,25 +62,31 @@ const NavBar: React.FC<NavBarProps> = ({
         </Link>
       </div>
       <div className="flex-1 hidden sm:flex justify-center">
-        <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
-          <input
+      <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
+        <input
             type="text"
             value={formQuery}
             onChange={(e) => setFormQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="Search"
-            className={`pl-5 p-2 border rounded-full w-full pr-10 ${theme === 'dark' ? 'bg-stone-900 text-stone-500 border-stone-600 dark-placeholder' : 'bg-white text-gray-500 border-gray-300 light-placeholder'}`}
-          />
-          <div className="absolute right-0 top-0 h-full flex items-center pr-3">
+            className={`pl-5 p-2 border rounded-full w-full pr-10 ${
+            theme === 'dark'
+                ? 'bg-stone-900 text-stone-500 border-stone-600 placeholder-stone-500 font-thin'
+                : 'bg-white text-gray-500 border-gray-300 placeholder-gray-500 font-thin'
+            }`}
+        />
+        <div className="absolute right-0 top-0 h-full flex items-center pr-3">
             <button type="submit" className="hidden">Search</button>
             {isFocused && (
-              <i
-                className={`fa-solid fa-circle-xmark cursor-pointer ${theme === 'dark' ? 'text-stone-500' : 'text-gray-500'}`}
+            <i
+                className={`fa-solid fa-circle-xmark cursor-pointer ${
+                theme === 'dark' ? 'text-stone-500' : 'text-gray-500'
+                }`}
                 onMouseDown={handleClearSearch}
-              ></i>
+            ></i>
             )}
-          </div>
+        </div>
         </form>
       </div>
       <div className="flex items-center space-x-4">

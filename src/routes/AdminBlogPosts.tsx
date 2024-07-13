@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css'; // Import the CSS file for custom styles
 import TimeAgo from '../components/TimeAgo'; // Import TimeAgo component
 
 interface Post {

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github.css'; // Import the highlight.js theme
 import { useTheme } from '../contexts/ThemeContext';
+import MarkdownRenderer from '../MarkdownRenderer';
+import '../markdown.css'
 
 // Define the Post type
 type Tag = {
@@ -73,6 +71,14 @@ const PostDetail: React.FC = () => {
   }
 
   const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const test = `# Example Markdown
+
+Here is a JavaScript code block:
+
+\`\`\`javascript
+const add = (num: number) => num + 1;
+console.log(add(5)); // 6
+\`\`\``
 
   return (
     <div className="flex justify-center p-8">
@@ -92,11 +98,8 @@ const PostDetail: React.FC = () => {
           </div>
         </div>
         <div className={`relative max-w-3xl w-full p-6 rounded-lg shadow-md markdown-body ${theme === 'dark' ? 'bg-stone-800 text-stone-100' : 'bg-gray-100 text-black'}`}>
-          <ReactMarkdown
-            className={`${theme === 'dark' ? 'dark' : ''}`}
-            children={post.content}
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
+          <MarkdownRenderer
+            content={post.content}
           />
         </div>
         <div className="mt-5 flex items-center space-x-4 text-sm font-thin text-stone-400">
