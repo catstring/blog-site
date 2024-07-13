@@ -23,20 +23,22 @@ const extractFirstImageUrl = (content: string): string | null => {
 };
 
 const PostCard: React.FC<PostCardProps> = ({ post, theme }) => (
-  <Link to={`/posts/${post.id}`} className="group">
+  <div>
     <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
       <div className={`absolute top-0 left-0 w-full h-full ${theme === 'dark' ? 'bg-stone-200' : 'bg-stone-200'} sm:rounded-lg overflow-hidden`}>
-        {extractFirstImageUrl(post.content) ? (
-          <img
-            src={extractFirstImageUrl(post.content) || ''}
-            alt="Post image"
-            className="absolute top-0 left-0 w-full h-full object-cover"
-          />
-        ) : (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-stone-400">
-            No Image
-          </div>
-        )}
+        <Link to={`/posts/${post.id}`} className="group">
+          {extractFirstImageUrl(post.content) ? (
+            <img
+              src={extractFirstImageUrl(post.content) || ''}
+              alt="Post image"
+              className="absolute top-0 left-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-stone-400">
+              No Image
+            </div>
+          )}
+        </Link>
       </div>
     </div>
     <div className="mt-2 ml-3">
@@ -48,7 +50,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, theme }) => (
         <p className="text-sm"><TimeAgo dateString={post.created_at} /></p>
       </div>
     </div>
-  </Link>
+  </div>
+
 );
 
 export default PostCard;
