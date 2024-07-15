@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext'; // Import useTheme hook
+import { createPost } from '../api'; // Import the createPost function
 
 const CreatePost: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -10,29 +11,13 @@ const CreatePost: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useTheme(); // Use the useTheme hook
 
-  const createPost = async (e: React.FormEvent) => {
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:8000/api/posts/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
-        },
-        body: JSON.stringify({
-          title,
-          content,
-          tag_names: tags.split(',').map(tag => tag.trim())
-        }),
-      });
-      if (res.ok) {
-        navigate('/admin-blog-posts');
-      } else {
-        const data = await res.json();
-        setError(data.detail || 'Creation failed');
-      }
-    } catch (err) {
-      setError('An error occurred');
+      await createPost(title, content, tags.split(',').map(tag => tag.trim()));
+      navigate('/admin-blog-posts');
+    } catch (err: any) {
+      setError(err.response?.data.detail || 'Creation failed');
     }
   };
 
@@ -44,7 +29,7 @@ const CreatePost: React.FC = () => {
         </Link>
         <h1 className="text-2xl mb-4">Create Post</h1>
         {error && <p className="text-red-500">{error}</p>}
-        <form className="flex flex-col gap-4" onSubmit={createPost}>
+        <form className="flex flex-col gap-4" onSubmit={handleCreatePost}>
           <label className="flex flex-col">
             Title
             <input

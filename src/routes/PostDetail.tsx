@@ -2,21 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import MarkdownRenderer from '../MarkdownRenderer';
-import '../markdown.css'
-
-// Define the Post type
-type Tag = {
-  name: string;
-};
-
-type Post = {
-  id: string;
-  title: string;
-  content: string;
-  tags: Tag[];
-  view_count: number;
-  created_at: string;
-};
+import '../markdown.css';
+import { fetchPost, incrementViewCount, Post } from '../api';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,13 +13,9 @@ const PostDetail: React.FC = () => {
   const { theme } = useTheme();
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const getPost = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/posts/${id}/`);
-        if (!res.ok) {
-          throw new Error('Failed to fetch post');
-        }
-        const data: Post = await res.json();
+        const data = await fetchPost(id!);
         setPost(data);
       } catch (err) {
         console.error('Error fetching post:', err);
@@ -40,22 +23,17 @@ const PostDetail: React.FC = () => {
       }
     };
 
-    fetchPost();
+    getPost();
 
-    const incrementViewCount = async () => {
+    const increment = async () => {
       try {
-        await fetch(`http://localhost:8000/api/posts/${id}/view/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        await incrementViewCount(id!);
       } catch (err) {
         console.error('Error incrementing view count:', err);
       }
     };
 
-    incrementViewCount();
+    increment();
   }, [id]);
 
   const handleTagClick = (tag: string) => {
@@ -96,8 +74,7 @@ const PostDetail: React.FC = () => {
         </div>
         <div className="mt-5 flex items-center space-x-4 text-sm font-thin text-stone-400">
           <div className="flex items-center space-x-1">
-            <i className="fa-solid fa-eye"></i>
-            <span>{post.view_count}</span>
+            <span>{post.view_count} Views</span>
           </div>
           <p className="">Published: {new Date(post.created_at).toLocaleDateString(undefined, dateOptions)}</p>
         </div>

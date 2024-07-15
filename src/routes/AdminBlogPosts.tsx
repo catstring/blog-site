@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import TimeAgo from '../components/TimeAgo'; // Import TimeAgo component
+import { fetchPosts, deletePost } from '../api';
 
 interface Post {
   id: number;
@@ -12,7 +13,7 @@ interface Post {
 
 const extractFirstImageUrl = (content: string): string | null => {
   const match = content.match(/!\[.*?\]\((.*?)\)/);
-  return match ? match[1] : null;
+  return match ? match[1] : null; 
 };
 
 const AdminBlogPosts: React.FC = () => {
@@ -20,7 +21,7 @@ const AdminBlogPosts: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const getPosts = async () => {
       try {
         const cachedPosts = localStorage.getItem('adminPosts');
         const cachedTime = localStorage.getItem('adminPostsCachedTime');
@@ -29,15 +30,7 @@ const AdminBlogPosts: React.FC = () => {
         if (cachedPosts && cachedTime && now - parseInt(cachedTime) < 60000) { // Cache duration: 1 minute
           setPosts(JSON.parse(cachedPosts));
         } else {
-          const res = await fetch('http://localhost:8000/api/posts/', {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('access')}`,
-            },
-          });
-          if (!res.ok) {
-            throw new Error('Failed to fetch posts');
-          }
-          const data = await res.json();
+          const data = await fetchPosts();
           setPosts(data);
 
           localStorage.setItem('adminPosts', JSON.stringify(data));
@@ -49,30 +42,21 @@ const AdminBlogPosts: React.FC = () => {
       }
     };
 
-    fetchPosts();
+    getPosts();
   }, []);
 
-  const deletePost = async (postId: number) => {
+  const handleDeletePost = async (postId: number) => {
     if (!window.confirm('Are you sure you want to delete this post?')) {
       return;
     }
 
     try {
-      const res = await fetch(`http://localhost:8000/api/posts/${postId}/`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
-        },
-      });
-      if (res.ok) {
-        const updatedPosts = posts.filter(post => post.id !== postId);
-        setPosts(updatedPosts);
+      await deletePost(postId);
+      const updatedPosts = posts.filter(post => post.id !== postId);
+      setPosts(updatedPosts);
 
-        // Update the cache after deleting a post
-        localStorage.setItem('adminPosts', JSON.stringify(updatedPosts));
-      } else {
-        throw new Error('Failed to delete post');
-      }
+      // Update the cache after deleting a post
+      localStorage.setItem('adminPosts', JSON.stringify(updatedPosts));
     } catch (err) {
       console.error('Error deleting post:', err);
       setError('Failed to delete post');
@@ -117,7 +101,7 @@ const AdminBlogPosts: React.FC = () => {
                     <i className="mr-3 fa-solid fa-pen-to-square"></i>
                   </Link>
                   <button
-                    onClick={() => deletePost(post.id)}
+                    onClick={() => handleDeletePost(post.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     <i className="fa-solid fa-trash-can"></i>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext'; // Import useTheme hook
+import { fetchPost, updatePost } from '../api'; // Import the necessary API functions
 
 const EditPost: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,40 +13,28 @@ const EditPost: React.FC = () => {
   const { theme } = useTheme(); // Use the useTheme hook
 
   useEffect(() => {
-    const fetchPost = async () => {
-      const res = await fetch(`http://localhost:8000/api/posts/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
-        },
-      });
-      const data = await res.json();
-      setTitle(data.title);
-      setContent(data.content);
-      setTags(data.tags.map((tag: { name: string }) => tag.name).join(', '));
+    const getPost = async () => {
+      try {
+        const data = await fetchPost(id!);
+        setTitle(data.title);
+        setContent(data.content);
+        setTags(data.tags.map((tag: { name: string }) => tag.name).join(', '));
+      } catch (err) {
+        console.error('Error fetching post:', err);
+        setError('Failed to fetch post');
+      }
     };
 
-    fetchPost();
+    getPost();
   }, [id]);
 
-  const updatePost = async (e: React.FormEvent) => {
+  const handleUpdatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:8000/api/posts/${id}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
-        },
-        body: JSON.stringify({ title, content, tag_names: tags.split(',').map(tag => tag.trim()) }),
-      });
-      if (res.ok) {
-        navigate('/admin-blog-posts');
-      } else {
-        const data = await res.json();
-        setError(data.detail || 'Update failed');
-      }
-    } catch (err) {
-      setError('An error occurred');
+      await updatePost(id!, title, content, tags.split(',').map(tag => tag.trim()));
+      navigate('/admin-blog-posts');
+    } catch (err: any) {
+      setError(err.response?.data.detail || 'Update failed');
     }
   };
 
@@ -57,7 +46,7 @@ const EditPost: React.FC = () => {
         </Link>
         <h1 className="text-2xl mb-4">Edit Post</h1>
         {error && <p className="text-red-500">{error}</p>}
-        <form className="flex flex-col gap-4" onSubmit={updatePost}>
+        <form className="flex flex-col gap-4" onSubmit={handleUpdatePost}>
           <label className="flex flex-col">
             Title
             <input
