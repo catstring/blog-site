@@ -43,10 +43,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, theme }) => (
     </div>
     <div className="mt-2 ml-3">
       <h2 className="text-md font-bold">{post.title}</h2>
-      <div className={`flex items-center space-x-4 pb-6 font-thin ${theme === 'dark' ? 'text-stone-400' : ' text-gray-600'}`}>
-        <div className="flex items-center space-x-1">
+      <div className={`flex items-center pb-6 font-thin ${theme === 'dark' ? 'text-stone-400' : ' text-gray-600'}`}>
+        {/* <div className="flex items-center mr-4">
           <span>{post.view_count} views</span>
-        </div>
+        </div> */}
         <p className="text-sm"><TimeAgo dateString={post.created_at} /></p>
       </div>
     </div>

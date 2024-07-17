@@ -73,10 +73,10 @@ const PostDetail: React.FC = () => {
           />
         </div>
         <div className="mt-5 flex items-center space-x-4 text-sm font-thin text-stone-400">
-          <div className="flex items-center space-x-1">
+          {/* <div className="flex items-center space-x-1">
             <span>{post.view_count} Views</span>
-          </div>
-          <p className="">Published: {new Date(post.created_at).toLocaleDateString(undefined, dateOptions)}</p>
+          </div> */}
+          <p className="">Published at {new Date(post.created_at).toLocaleDateString(undefined, dateOptions)}</p>
         </div>
       </div>
     </div>
