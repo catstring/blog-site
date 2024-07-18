@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext'; // Import useTheme hook
-import { fetchPost, updatePost } from '../api'; // Import the necessary API functions
+import { fetchPost, updatePost, Post } from '../api'; // Import the necessary API functions and Post type
+
+interface ApiError {
+  response?: {
+    data?: {
+      detail?: string;
+    };
+  };
+}
 
 const EditPost: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,10 +23,10 @@ const EditPost: React.FC = () => {
   useEffect(() => {
     const getPost = async () => {
       try {
-        const data = await fetchPost(id!);
+        const data: Post = await fetchPost(id!);
         setTitle(data.title);
         setContent(data.content);
-        setTags(data.tags.map((tag: { name: string }) => tag.name).join(', '));
+        setTags(data.tags.map(tag => tag.name).join(', '));
       } catch (err) {
         console.error('Error fetching post:', err);
         setError('Failed to fetch post');
@@ -33,8 +41,9 @@ const EditPost: React.FC = () => {
     try {
       await updatePost(id!, title, content, tags.split(',').map(tag => tag.trim()));
       navigate('/admin-blog-posts');
-    } catch (err: any) {
-      setError(err.response?.data.detail || 'Update failed');
+    } catch (err) {
+      const error = err as ApiError;
+      setError(error.response?.data?.detail || 'Update failed');
     }
   };
 

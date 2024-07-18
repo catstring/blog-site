@@ -56,7 +56,7 @@ const PostDetail: React.FC = () => {
         <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
         <div className="mt-2 mb-4">
           <div className="flex flex-wrap gap-2">
-            {post.tags.map(tag => (
+            {post.tags.map((tag) => (
               <span
                 key={tag.name}
                 className={`rounded-full px-3 p-2 text-sm cursor-pointer ${theme === 'dark' ? 'bg-stone-700 text-white' : 'bg-stone-200 text-black'}`}
@@ -73,9 +73,6 @@ const PostDetail: React.FC = () => {
           />
         </div>
         <div className="mt-5 flex items-center space-x-4 text-sm font-thin text-stone-400">
-          {/* <div className="flex items-center space-x-1">
-            <span>{post.view_count} Views</span>
-          </div> */}
           <p className="">Published at {new Date(post.created_at).toLocaleDateString(undefined, dateOptions)}</p>
         </div>
       </div>

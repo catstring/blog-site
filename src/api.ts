@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-interface Post {
+export interface Post {
   id: number;
   title: string;
   content: string;
   created_at: string;
   view_count: number;
+  tags: { name: string }[]; 
 }
 
 const apiClient = axios.create({
