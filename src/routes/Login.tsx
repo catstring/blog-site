@@ -10,11 +10,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:8000/api/token/', {
+      const res = await fetch(`${baseURL}/token/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

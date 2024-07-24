@@ -32,13 +32,14 @@ const useFetchPosts = (searchQuery: string) => {
 
     const fetchData = async () => {
       try {
+        const baseURL = import.meta.env.VITE_API_BASE_URL;
         const cachedTags = localStorage.getItem('blogTags');
         const cachedTime = localStorage.getItem('blogCachedTime');
         const now = new Date().getTime();
         const cacheDuration = 60000; // 1 minute cache duration
 
         const fetchPosts = async () => {
-          const response = await fetch(`http://localhost:8000/api/posts/?search=${searchQuery}`);
+          const response = await fetch(`${baseURL}/posts/?search=${searchQuery}`);
           if (!response.ok) {
             throw new Error('Failed to fetch posts');
           }
@@ -46,7 +47,7 @@ const useFetchPosts = (searchQuery: string) => {
         };
 
         const fetchTags = async () => {
-          const response = await fetch('http://localhost:8000/api/tags/');
+          const response = await fetch(`${baseURL}/tags/`);
           if (!response.ok) {
             throw new Error('Failed to fetch tags');
           }

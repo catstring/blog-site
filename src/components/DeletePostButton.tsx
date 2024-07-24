@@ -10,9 +10,9 @@ const DeletePostButton: React.FC<DeletePostButtonProps> = ({ postId }) => {
 
   const deletePost = async () => {
     const token = localStorage.getItem('access');
-
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     try {
-      const res = await fetch(`http://localhost:8000/api/posts/${postId}/`, {
+      const res = await fetch(`${baseURL}/posts/${postId}/`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
