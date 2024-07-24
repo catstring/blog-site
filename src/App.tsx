@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BlogPosts from './routes/BlogPosts';
 import NavBar from './components/Navbar';
 import Login from './routes/Login';
-import AdminBlogPosts from './routes/AdminBlogPosts';
-import CreatePost from './routes/CreatePost';
-import EditPost from './routes/EditPost';
+// import AdminBlogPosts from './routes/AdminBlogPosts';
+// import CreatePost from './routes/CreatePost';
+// import EditPost from './routes/EditPost';
 import PostDetail from './routes/PostDetail';
 
 const App: React.FC = () => {
@@ -49,9 +49,9 @@ const App: React.FC = () => {
         <Route path="/" element={<BlogPosts searchQuery="" />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/posts/:id" element={<PostDetail />} />
-        {isLoggedIn && <Route path="/admin-blog-posts" element={<AdminBlogPosts />} />}
+        {/* {isLoggedIn && <Route path="/admin-blog-posts" element={<AdminBlogPosts />} />}
         {isLoggedIn && <Route path="/create" element={<CreatePost />} />}
-        {isLoggedIn && <Route path="/edit/:id" element={<EditPost />} />}
+        {isLoggedIn && <Route path="/edit/:id" element={<EditPost />} />} */}
       </Routes>
     </div>
   );
