@@ -1,14 +1,35 @@
 // src/App.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BlogPosts from './routes/BlogPosts';
-import { useTheme } from './contexts/ThemeContext';
+import NavBar from './components/Navbar';
 
 const App: React.FC = () => {
-  const { theme } = useTheme(); // Use theme context
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleLogin = () => {
+    // Handle login functionality
+  };
+
+  const handleLogout = () => {
+    // Handle logout functionality
+    setIsLoggedIn(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-stone-900 text-stone-100' : 'bg-white text-black'}`}>
+    <div className="min-h-screen bg-white text-black">
+      <NavBar
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
+        onLogin={handleLogin}
+        isDropdownOpen={isDropdownOpen}
+        toggleDropdown={toggleDropdown}
+      />
       <Routes>
         <Route path="/" element={<BlogPosts searchQuery="" />} />
       </Routes>
