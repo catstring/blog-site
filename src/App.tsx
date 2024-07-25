@@ -1,15 +1,17 @@
 // src/App.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
-import Admin from './routes/Login';
-import BlogPosts from './routes/BlogPosts';
-import PostDetail from './routes/PostDetail';
-import AdminBlogPosts from './routes/AdminBlogPosts';
-import CreatePost from './routes/CreatePost';
-import EditPost from './routes/EditPost';
 import NavBar from './components/Navbar';
 import SearchOverlay from './components/SearchOverlay';
 import { useTheme } from './contexts/ThemeContext';
+
+// Dynamically imported routes
+const Admin = React.lazy(() => import('./routes/Login'));
+const BlogPosts = React.lazy(() => import('./routes/BlogPosts'));
+const PostDetail = React.lazy(() => import('./routes/PostDetail'));
+const AdminBlogPosts = React.lazy(() => import('./routes/AdminBlogPosts'));
+const CreatePost = React.lazy(() => import('./routes/CreatePost'));
+const EditPost = React.lazy(() => import('./routes/EditPost'));
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access'));
@@ -17,9 +19,7 @@ const App: React.FC = () => {
   const [formQuery, setFormQuery] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-
   const { theme, toggleTheme } = useTheme(); // Use theme context
-
   const navigate = useNavigate(); // Ensure useNavigate is used within the Router context
 
   useEffect(() => {
@@ -116,14 +116,16 @@ const App: React.FC = () => {
         theme={theme}
       />
       <div className={`${isDropdownOpen || isSearchOpen ? 'pointer-events-none' : ''} relative z-0`}>
-        <Routes>
-          <Route path="/login" element={<Admin onLogin={handleLoginSuccess} />} />
-          <Route path="/" element={<BlogPosts searchQuery={searchQuery} />} />
-          <Route path="/posts/:id" element={<PostDetail />} />
-          <Route path="/admin-blog-posts" element={<AdminBlogPosts />} />
-          <Route path="/create" element={<CreatePost />} />
-          <Route path="/edit/:id" element={<EditPost />} />
-        </Routes>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/login" element={<Admin onLogin={handleLoginSuccess} />} />
+            <Route path="/" element={<BlogPosts searchQuery={searchQuery} />} />
+            <Route path="/posts/:id" element={<PostDetail />} />
+            <Route path="/admin-blog-posts" element={<AdminBlogPosts />} />
+            <Route path="/create" element={<CreatePost />} />
+            <Route path="/edit/:id" element={<EditPost />} />
+          </Routes>
+        </Suspense>
       </div>
     </div>
   );
