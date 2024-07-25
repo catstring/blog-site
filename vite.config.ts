@@ -17,12 +17,17 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // Splitting each library into its own chunk
-            return id.toString().split('node_modules/')[1].split('/')[0];
+            // Here we try to avoid chunking certain smaller or problematic libraries
+            const chunks = ['react', 'react-dom', 'lodash'];
+            const chunkName = id.toString().split('node_modules/')[1].split('/')[0];
+            if (chunks.includes(chunkName)) {
+              return chunkName;
+            }
+            return 'vendor'; // Group smaller dependencies into a single chunk
           }
         }
       }
     },
-    chunkSizeWarningLimit: 600, // Increasing the chunk size warning limit
+    chunkSizeWarningLimit: 600,
   }
 });
