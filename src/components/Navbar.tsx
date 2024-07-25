@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface NavBarProps {
@@ -7,8 +7,14 @@ interface NavBarProps {
   onLogout: () => void;
   onLogin: () => void;
   toggleTheme: () => void;
+  openSearch: () => void;
+  formQuery: string;
+  setFormQuery: (query: string) => void;
+  handleSearchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleClearSearch: () => void;
   isDropdownOpen: boolean;
   toggleDropdown: () => void;
+  closeDropdown: () => void; 
 }
 
 const NavBar: React.FC<NavBarProps> = ({
@@ -17,9 +23,16 @@ const NavBar: React.FC<NavBarProps> = ({
   onLogout,
   onLogin,
   toggleTheme,
+  openSearch,
+  formQuery,
+  setFormQuery,
+  handleSearchSubmit,
+  handleClearSearch,
   isDropdownOpen,
   toggleDropdown,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <nav className={`p-4 ${theme === 'dark' ? 'bg-stone-900 text-stone-400' : 'bg-white text-black'} flex justify-between items-center`}>
       <div className="flex items-center space-x-4">
@@ -48,8 +61,38 @@ const NavBar: React.FC<NavBarProps> = ({
           </span>
         </Link>
       </div>
+      <div className="flex-1 hidden sm:flex justify-center">
+      <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
+        <input
+            type="text"
+            value={formQuery}
+            onChange={(e) => setFormQuery(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder="Search"
+            className={`pl-5 p-2 border rounded-full w-full pr-10 ${
+            theme === 'dark'
+                ? 'bg-stone-900 text-stone-500 border-stone-600 placeholder-stone-500 font-thin'
+                : 'bg-white text-gray-500 border-gray-300 placeholder-gray-500 font-thin'
+            }`}
+        />
+        <div className="absolute right-0 top-0 h-full flex items-center pr-3">
+            <button type="submit" className="hidden">Search</button>
+            {isFocused && (
+            <i
+                className={`fa-solid fa-circle-xmark cursor-pointer ${
+                theme === 'dark' ? 'text-stone-500' : 'text-gray-500'
+                }`}
+                onMouseDown={handleClearSearch}
+            ></i>
+            )}
+        </div>
+        </form>
+      </div>
       <div className="flex items-center space-x-4">
-        {isLoggedIn && (
+        <div className="sm:hidden">
+          <i className={`fa-solid fa-magnifying-glass cursor-pointer ${theme === 'dark' ? 'text-stone-100' : 'text-black'}`} onClick={openSearch}></i>
+        </div>
           <>
             <Link to="/create" className={`flex items-center text-xl ${theme === 'dark' ? 'text-stone-100' : 'text-black'}`}>
               <i className="fa-regular fa-square-plus"></i>
@@ -58,7 +101,6 @@ const NavBar: React.FC<NavBarProps> = ({
               <i className="fa-solid fa-user-tie"></i>
             </Link>
           </>
-        )}
       </div>
     </nav>
   );
