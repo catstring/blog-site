@@ -50,6 +50,8 @@ const NavBar: React.FC<NavBarProps> = ({
         </div>
         <Link to="/" className="font-bold text-2xl">
           <span className={`${theme === 'dark' ? 'text-stone-100' : 'text-black'}`}>
+            <i className="fa-solid fa-bookmark mr-2 text-blue-400"></i>
+
             Todd<span className="font-thin">'s Blog</span>
           </span>
         </Link>

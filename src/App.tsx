@@ -115,7 +115,7 @@ const App: React.FC = () => {
         closeSearch={closeSearch}
         theme={theme}
       />
-      <div className={`${isDropdownOpen || isSearchOpen ? 'pointer-events-none' : ''} relative z-0`}>
+      <div className={`${isDropdownOpen || isSearchOpen ? 'pointer-events-none' : ''} relative z-0 my-8 sm:mx-8`}>
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/login" element={<Admin onLogin={handleLoginSuccess} />} />

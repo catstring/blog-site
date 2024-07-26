@@ -51,23 +51,25 @@ const PostDetail: React.FC = () => {
   const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="flex justify-center sm:m">
       <div className="max-w-3xl w-full">
-        <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
-        <div className="mt-2 mb-4">
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <span
-                key={tag.name}
-                className={`rounded-full px-3 p-2 text-sm cursor-pointer ${theme === 'dark' ? 'bg-stone-700 text-white' : 'bg-stone-200 text-black'}`}
-                onClick={() => handleTagClick(tag.name)}
-              >
-                {tag.name}
-              </span>
-            ))}
+        <div className="ml-6">
+          <h1 className={`text-3xl ${theme === 'dark' ? 'text-stone-100' : 'text-stone-900'} font-bold`}>{post.title}</h1>
+          <div className="mt-2 mb-4">
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <span
+                  key={tag.name}
+                  className={`rounded-full px-3 p-2 text-sm cursor-pointer ${theme === 'dark' ? 'bg-stone-700 text-white' : 'bg-stone-200 text-black'}`}
+                  onClick={() => handleTagClick(tag.name)}
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-        <div className={`relative max-w-3xl w-full p-6 rounded-lg shadow-md markdown-body ${theme === 'dark' ? 'bg-stone-800 text-stone-100' : 'bg-gray-100 text-black'}`}>
+        <div className={`relative max-w-3xl w-full p-6 sm:rounded-lg shadow-md markdown-body ${theme === 'dark' ? 'bg-stone-800 text-stone-100' : 'bg-gray-100 text-black'}`}>
           <MarkdownRenderer
             content={post.content}
           />
