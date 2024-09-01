@@ -49,11 +49,11 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ searchQuery }) => {
         selectedTags={selectedTags}
         onTagClick={handleTagClick}
         onAllClick={handleAllClick}
-        theme={theme} // Pass the theme to TagFilter
+        theme={theme} // Pass theme to TagFilter
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPosts.map(post => (
-          <PostCard key={post.id} post={post} theme={theme} /> // Pass the theme to PostCard
+          <PostCard key={post.id} post={post} theme={theme} /> // Pass theme to PostCard
         ))}
       </div>
     </main>

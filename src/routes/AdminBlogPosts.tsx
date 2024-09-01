@@ -49,7 +49,7 @@ const AdminBlogPosts: React.FC = () => {
       const updatedPosts = posts.filter(post => post.id !== postId);
       setPosts(updatedPosts);
 
-      // Update the cache after deleting a post
+      // Update cache after deleting a post
       localStorage.setItem('adminPosts', JSON.stringify(updatedPosts));
     } catch (err) {
       console.error('Error deleting post:', err);
@@ -61,7 +61,7 @@ const AdminBlogPosts: React.FC = () => {
     return <p className="text-red-500">{error}</p>;
   }
 
-  const theme = localStorage.getItem('theme') || 'dark'; // Retrieve theme from localStorage
+  const theme = localStorage.getItem('theme') || 'dark';
 
   return (
     <main className="sm:px-12 px-0">

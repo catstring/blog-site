@@ -1,11 +1,9 @@
-// src/App.tsx
 import React, { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import NavBar from './components/Navbar';
 import SearchOverlay from './components/SearchOverlay';
 import { useTheme } from './contexts/ThemeContext';
 
-// Dynamically imported routes
 const Admin = React.lazy(() => import('./routes/Login'));
 const BlogPosts = React.lazy(() => import('./routes/BlogPosts'));
 const PostDetail = React.lazy(() => import('./routes/PostDetail'));
@@ -19,8 +17,8 @@ const App: React.FC = () => {
   const [formQuery, setFormQuery] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-  const { theme, toggleTheme } = useTheme(); // Use theme context
-  const navigate = useNavigate(); // Ensure useNavigate is used within the Router context
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

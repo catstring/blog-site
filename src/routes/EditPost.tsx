@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext'; // Import useTheme hook
-import { fetchPost, updatePost, Post } from '../api'; // Import the necessary API functions and Post type
+import { useTheme } from '../contexts/ThemeContext';
+import { fetchPost, updatePost, Post } from '../api';
 
 interface ApiError {
   response?: {
@@ -18,7 +18,7 @@ const EditPost: React.FC = () => {
   const [tags, setTags] = useState<string>('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { theme } = useTheme(); // Use the useTheme hook
+  const { theme } = useTheme();
 
   useEffect(() => {
     const getPost = async () => {

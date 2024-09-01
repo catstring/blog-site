@@ -1,4 +1,3 @@
-// src/hooks/useFetchPosts.ts
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
