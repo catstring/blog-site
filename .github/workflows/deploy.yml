@@ -31,7 +31,8 @@ jobs:
       run: npm test
 
     - name: Build Project
-      run: npm run build
+      run: |
+        VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} npm run build
 
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
