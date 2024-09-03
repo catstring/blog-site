@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TagFilter from '../components/TagFilter';
 import PostCard from '../components/PostCard';
@@ -13,6 +13,10 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ searchQuery }) => {
   const navigate = useNavigate();
   const { theme } = useTheme(); // Use the useTheme hook to get the current theme
   const { posts, tags, error, selectedTags, setSelectedTags } = useFetchPosts(searchQuery);
+
+  useEffect(() => {
+    console.log('VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
+  }, []);
 
   const handleTagClick = (tag: string) => {
     setSelectedTags(prevTags =>
