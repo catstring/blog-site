@@ -58,3 +58,9 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "
           sudo chown -R nginx:nginx ${{ env.PROJECT_BASE_DIR }}/${{ env.PROJECT_NAME }}
         "
+
+    - name: Reload Nginx
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "
+          sudo systemctl reload nginx
+        "
