@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import MarkdownRenderer from '../MarkdownRenderer';
 import '../markdown.css';
 import { fetchPost, incrementViewCount, Post } from '../api';
+import { Helmet } from 'react-helmet';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,12 +46,27 @@ const PostDetail: React.FC = () => {
   }
 
   if (!post) {
-    return <p>Loading...</p>;
+    return <p>Free database takes some time...</p>;
   }
 
   const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
+  const extractFirstImage = (content: string) => {
+    const imageRegex = /!\[.*?\]\((.*?)\)/;
+    const match = content.match(imageRegex);
+    return match ? match[1] : null;
+  };
+
+  const firstImage = extractFirstImage(post.content);
+
   return (
+    <>
+    <Helmet>
+      <meta property="og:title" content={post.title} />
+      <meta property="og:image" content={firstImage || 'https://your-default-image-url.com'} />
+      <title>{post.title}</title>
+    </Helmet>
+
     <div className="flex justify-center sm:m">
       <div className="max-w-3xl w-full">
         <div className="ml-6">
@@ -79,6 +95,7 @@ const PostDetail: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

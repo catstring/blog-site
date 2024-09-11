@@ -4,6 +4,7 @@ import TagFilter from '../components/TagFilter';
 import PostCard from '../components/PostCard';
 import useFetchPosts from '../hooks/useFetchPosts';
 import { useTheme } from '../contexts/ThemeContext';
+import { Helmet } from 'react-helmet';
 
 interface BlogPostsProps {
   searchQuery: string;
@@ -45,21 +46,31 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ searchQuery }) => {
     return <p className="text-red-500">{error}</p>;
   }
 
+  if (!posts) {
+    return <p>Free database takes some time...</p>;
+  }
+
   return (
-    <main className="sm:px-12 px-0">
-      <TagFilter
-        tags={tags}
-        selectedTags={selectedTags}
-        onTagClick={handleTagClick}
-        onAllClick={handleAllClick}
-        theme={theme} // Pass theme to TagFilter
-      />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredPosts.map(post => (
-          <PostCard key={post.id} post={post} theme={theme} /> // Pass theme to PostCard
-        ))}
-      </div>
-    </main>
+    <>
+      <Helmet>
+        <title>Todd's Blog</title>
+      </Helmet>
+
+      <main className="sm:px-12 px-0">
+        <TagFilter
+          tags={tags}
+          selectedTags={selectedTags}
+          onTagClick={handleTagClick}
+          onAllClick={handleAllClick}
+          theme={theme} // Pass theme to TagFilter
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredPosts.map(post => (
+            <PostCard key={post.id} post={post} theme={theme} /> // Pass theme to PostCard
+          ))}
+        </div>
+      </main>
+    </>
   );
 };
 
