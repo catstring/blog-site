@@ -64,6 +64,7 @@ const PostDetail: React.FC = () => {
     <Helmet>
       <meta property="og:title" content={post.title} />
       <meta property="og:image" content={firstImage || 'https://your-default-image-url.com'} />
+      <meta property="og:url" content={`https://blog.toddmctsai.me/posts/${post.id}`} />
       <title>{post.title}</title>
     </Helmet>
 
